@@ -57,13 +57,16 @@ class _SpaceState extends State<Space> with TickerProviderStateMixin {
   final double distanceEarthSun = 180;
   final double distanceEarthMoon = 30;
 
+  double _scale = 1.0;
+  double _previousScale = 1.0;
+
   @override
   Widget build(BuildContext context) {
-    const double sunRadius = 130;
-    const double earthRadius = 30;
-    const double moonRadius = 10;
-    const double distanceEarthSun = 120;
-    const double distanceEarthMoon = 30;
+    // const double sunRadius = 130;
+    // const double earthRadius = 30;
+    // const double moonRadius = 10;
+    // const double distanceEarthSun = 120;
+    // const double distanceEarthMoon = 30;
 
     return DecoratedBox(
       decoration: const BoxDecoration(
@@ -72,60 +75,81 @@ class _SpaceState extends State<Space> with TickerProviderStateMixin {
           fit: BoxFit.cover
         )
       ),
-      child: Center(
-        child: Boundary(
-          padding: earthRadius + moonRadius,
-          size: distanceEarthSun + distanceEarthMoon + sunRadius + earthRadius * 2 + moonRadius * 2,
-          child: Stack(
-            children: <Widget>[
-              Element(
-                image: 'assets/sun.png',
-                dimension: sunRadius,
-                // color: Colors.yellowAccent,
-                // shadows: const <BoxShadow>[
-                //   BoxShadow(
-                //     blurRadius: 30,
-                //     color: Colors.yellowAccent,
-                //     blurStyle: BlurStyle.solid
-                //   )
-                // ],
-              ),
-
-              AnimatedBuilder(
-                animation: _earthAnimCon,
-                builder: (context, child) => Transform.rotate(
-                  angle: _earthAnim.value,
-                  child: Align(
-                    alignment: Alignment.topCenter,
-                    child: Boundary(
-                      padding: moonRadius/2,
-                      size: distanceEarthMoon + earthRadius + moonRadius * 2,
-                      child: Stack(
-                        children: <Widget>[
-                          // THE EARTH
-                          Element(
-                            image: 'assets/earth.png',
-                            dimension: earthRadius,
-                            // color: const Color.fromARGB(255, 11, 161, 236)
-                          ),
-
-                          // THE MOON
-                          Transform.rotate(
-                            angle: _moonAnim.value,
-                            child: Element(
-                              dimension: moonRadius,
-                              // color: Colors.red,
-                              image: 'assets/moon.png',
-                              alignment: Alignment.topCenter,
-                            ),
-                          )
-                        ],
+      child: GestureDetector(
+        onScaleStart: (details) {
+          _previousScale = _scale;
+        },
+        onScaleUpdate: (details) {
+          setState(() {
+            _scale = _previousScale * details.scale;
+          });
+        },
+        child: Center(
+          child: AnimatedBuilder(
+            animation: _earthAnim,
+            builder: (context, child) {
+              return Transform(
+                // transform: Matrix4.skewX(.5),
+                // transform: Matrix4.skew(.4, .2)..,
+                // alignment: Alignment.bottomCenter,
+                transform: Matrix4.diagonal3Values(1, 1, 1),
+                child: Boundary(
+                  padding: earthRadius + moonRadius,
+                  size: distanceEarthSun + distanceEarthMoon + sunRadius + earthRadius * 2 + moonRadius * 2,
+                  child: Stack(
+                    children: <Widget>[
+                      Element(
+                        image: 'assets/sun.png',
+                        dimension: sunRadius,
+                        // color: Colors.yellowAccent,
+                        // shadows: const <BoxShadow>[
+                        //   BoxShadow(
+                        //     blurRadius: 30,
+                        //     color: Colors.yellowAccent,
+                        //     blurStyle: BlurStyle.solid
+                        //   )
+                        // ],
                       ),
-                    ),
+
+                      AnimatedBuilder(
+                        animation: _earthAnimCon,
+                        builder: (context, child) => Transform.rotate(
+                          angle: _earthAnim.value,
+                          child: Align(
+                            alignment: Alignment.topCenter,
+                            child: Boundary(
+                              padding: moonRadius/2,
+                              size: distanceEarthMoon + earthRadius + moonRadius * 2,
+                              child: Stack(
+                                children: <Widget>[
+                                  // THE EARTH
+                                  Element(
+                                    image: 'assets/earth.png',
+                                    dimension: earthRadius,
+                                    // color: const Color.fromARGB(255, 11, 161, 236)
+                                  ),
+
+                                  // THE MOON
+                                  Transform.rotate(
+                                    angle: _moonAnim.value,
+                                    child: Element(
+                                      dimension: moonRadius,
+                                      // color: Colors.red,
+                                      image: 'assets/moon.png',
+                                      alignment: Alignment.topCenter,
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-              ),
-            ],
+              );
+            }
           ),
         ),
       ),
