@@ -6,6 +6,8 @@ A new Flutter project.
 
 ![GitHub Logo](/video/vid1.mp4)
 
+![GitHub Logo](/video/shot1.png)
+
 This project is a starting point for a Flutter application.
 
 A few resources to get you started if this is your first Flutter project:
